@@ -3,10 +3,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screen/All_Students.dart';
 
+set_data() async {
+  var i = 1;
+  var j = 1;
+  final docstudent =  FirebaseFirestore.instance;
+  try{
+    while(j < 15) {
+      await docstudent.collection("Students").doc("Etu=>" + i.toString()).set({
+        'nom': "N_Etudiant_" + i.toString(),
+        'prenom': "P_Etudiant_" + i.toString(),
+        'ville': "Ville_" + i.toString(),
+      }
+      );
+      i++;
+      j++;
+    }
+  }catch(e){
+    print(e);
+  }
+}
 void  main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
+  set_data();
 }
 
 class MyApp extends StatelessWidget {
@@ -16,11 +36,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: '',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.blueGrey,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Simple Crud Application'),
     );
   }
 }
@@ -53,26 +73,28 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
   update() async {
-    try{
-      await docstudent.collection("Students").doc(nom_controller.text).update({
-        'prenom': prenom_controller.text,
-        'ville':ville_controller.text,
-      });
-    }catch(e){
-      print(e);
-    }
+      try{
+        await docstudent.collection("Students").doc(nom_controller.text).update({
+          'prenom': prenom_controller.text,
+          'ville':ville_controller.text,
+        });
+      }catch(e){
+        print(e);
+      }
   }
   delete() async {
     try{
-      await docstudent.collection("Students").doc(nom_controller.text).delete();
     }catch(e){
       print(e);
     }
   }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
+      // backgroundColor:Color(0x9ecff7),
       appBar: AppBar(
+
         title: Text(widget.title),
       ),
       body: Column (
@@ -81,63 +103,54 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.all(17.0),
-            child: TextFormField(
-              controller: nom_controller,
-              decoration: const InputDecoration(
-                  labelText: "Nom",
-                  fillColor: Colors.white,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Colors.blue,
-                        width: 2.0
-                    ),
-                  )
-              ),
-              onChanged: (String name){
-                // getName(name);
-              },
+            child : ListTile(
+                title: TextFormField(
+                  controller: nom_controller,
+                  decoration: const InputDecoration(
+                      labelText: "Nom",
+                      fillColor: Colors.white,
+                  ),
+                  onChanged: (String name){
+                    // getName(name);
+                  },
+                ),
+                leading: const Icon(Icons.person_outline,size: 50,color: Colors.blueGrey,),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(17.0),
-            child: TextFormField(
-              controller: prenom_controller,
-              decoration: const InputDecoration(
+            child : ListTile(
+              title: TextFormField(
+                controller: prenom_controller,
+                decoration: const InputDecoration(
                   labelText: "Prenom",
                   fillColor: Colors.white,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Colors.blue,
-                        width: 2.0
-                    ),
-                  )
+                ),
+                onChanged: (String name){
+                  // getName(name);
+                },
               ),
-              onChanged: (String pren){
-                // getPren(pren);
-              },
+              leading: const Icon(Icons.person_outline,size: 50,color: Colors.blueGrey,),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(17.0),
-            child: TextFormField(
-              controller: ville_controller,
-              decoration: const InputDecoration(
+            child : ListTile(
+              title: TextFormField(
+                controller: ville_controller,
+                decoration: const InputDecoration(
                   labelText: "Ville",
                   fillColor: Colors.white,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Colors.blue,
-                        width: 2.0
-                    ),
-                  )
+                ),
+                onChanged: (String name){
+                  // getName(name);
+                },
               ),
-              onChanged: (String ville){
-                // getVille(ville);
-              },
+              leading: const Icon(Icons.house_outlined,size: 50,color: Colors.blueGrey,),
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               ElevatedButton.icon(
@@ -150,38 +163,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                 label: const Text(
                   "Create",
-                  style: TextStyle(
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-              ),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.edit),
-                onPressed: (){
-                  update();
-                  nom_controller.clear();
-                  prenom_controller.clear();
-                  ville_controller.clear();
-                },
-                label: const Text(
-                  "Update",
-                  style: TextStyle(
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-              ),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.delete),
-                onPressed: (){
-                  delete();
-                  nom_controller.clear();
-                  prenom_controller.clear();
-                  ville_controller.clear();
-                },
-                label: const Text(
-                  "delete",
                   style: TextStyle(
                       fontSize: 12.0,
                       fontWeight: FontWeight.bold
